@@ -8,13 +8,19 @@ package net.ccbluex.liquidbounce
 import net.ccbluex.liquidbounce.discord.ClientRichPresence
 import net.ccbluex.liquidbounce.event.ClientShutdownEvent
 import net.ccbluex.liquidbounce.event.EventManager
+import net.ccbluex.liquidbounce.event.EventManager.callEvent
+import net.ccbluex.liquidbounce.event.EventManager.registerListener
 import net.ccbluex.liquidbounce.features.command.CommandManager
 import net.ccbluex.liquidbounce.features.module.ModuleManager
 import net.ccbluex.liquidbounce.features.special.AntiForge
 import net.ccbluex.liquidbounce.features.special.BungeeCordSpoof
 import net.ccbluex.liquidbounce.features.special.MacroManager
 import net.ccbluex.liquidbounce.file.FileManager
+import net.ccbluex.liquidbounce.file.FileManager.loadAllConfigs
+import net.ccbluex.liquidbounce.file.FileManager.saveAllConfigs
 import net.ccbluex.liquidbounce.script.ScriptManager
+import net.ccbluex.liquidbounce.script.ScriptManager.enableScripts
+import net.ccbluex.liquidbounce.script.ScriptManager.loadScripts
 import net.ccbluex.liquidbounce.script.remapper.Remapper.loadSrg
 import net.ccbluex.liquidbounce.tabs.*
 import net.ccbluex.liquidbounce.ui.client.altmanager.GuiAltManager
@@ -50,8 +56,8 @@ object LiquidBounce {
     lateinit var moduleManager: ModuleManager
     lateinit var commandManager: CommandManager
     lateinit var eventManager: EventManager
-    lateinit var fileManager: FileManager
-    lateinit var scriptManager = ScriptManager
+    val fileManager = FileManager
+    val scriptManager = ScriptManager
     lateinit var tipSoundManager: TipSoundManager
 
     // HUD & ClickGUI
@@ -87,19 +93,17 @@ object LiquidBounce {
         eventManager = EventManager()
 
         // Register listeners
-        eventManager.registerListener(RotationUtils())
-        eventManager.registerListener(AntiForge())
-        eventManager.registerListener(BungeeCordSpoof())
-        eventManager.registerListener(InventoryUtils())
-        eventManager.registerListener(InventoryHelper)
-        eventManager.registerListener(PacketUtils())
-        eventManager.registerListener(SessionUtils())
-        eventManager.registerListener(MacroManager)
+        registerListener(RotationUtils())
+        registerListener(AntiForge())
+        registerListener(BungeeCordSpoof())
+        registerListener(InventoryUtils())
+        registerListener(InventoryHelper)
+        registerListener(PacketUtils())
+        registerListener(SessionUtils())
+        registerListener(MacroManager)
 
         // Init Discord RPC
         clientRichPresence = ClientRichPresence()
-
-        scriptManager = ScriptManager()
 
         // Create command manager
         commandManager = CommandManager()
@@ -117,11 +121,8 @@ object LiquidBounce {
         // Remapper
         try {
             loadSrg()
-
-            // ScriptManager
-            scriptManager = ScriptManager()
-            scriptManager.loadScripts()
-            scriptManager.enableScripts()
+            loadScripts()
+            enableScripts()
         } catch (throwable: Throwable) {
             ClientUtils.getLogger().error("Failed to load scripts.", throwable)
         }
@@ -130,8 +131,9 @@ object LiquidBounce {
         commandManager.registerCommands()
 
         // Load configs
-        fileManager.loadConfigs(fileManager.modulesConfig, fileManager.valuesConfig, fileManager.accountsConfig,
+        //fileManager.loadConfigs(fileManager.modulesConfig, fileManager.valuesConfig, fileManager.accountsConfig,
                 fileManager.friendsConfig, fileManager.xrayConfig)
+        loadAllConfigs()
 
         // ClickGUI
         clickGui = ClickGui()
@@ -173,10 +175,10 @@ object LiquidBounce {
      */
     fun stopClient() {
         // Call client shutdown
-        eventManager.callEvent(ClientShutdownEvent())
+        callEvent(ClientShutdownEvent())
 
         // Save all available configs
-        fileManager.saveAllConfigs()
+        saveAllConfigs()
 
         // Shutdown discord rpc
         clientRichPresence.shutdown()
