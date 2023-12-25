@@ -38,7 +38,7 @@ object LiquidBounce {
     // Client information
     const val CLIENT_NAME = "LiquidBounce++"
     const val CLIENT_VERSION = "0.3"
-    const val CLIENT_CREATOR = "CCBlueX, exit-scammed, and PlusPlusMC"
+    const val CLIENT_CREATOR = "CCBlueX, exit-scammed, and MokkowDev"
     const val CLIENT_CLOUD = "https://plusplusmc.github.io/Cloud/LiquidBounce/"
 
     var isStarting = false
@@ -51,7 +51,7 @@ object LiquidBounce {
     lateinit var commandManager: CommandManager
     lateinit var eventManager: EventManager
     lateinit var fileManager: FileManager
-    lateinit var scriptManager: ScriptManager
+    lateinit var scriptManager = ScriptManager
     lateinit var tipSoundManager: TipSoundManager
 
     // HUD & ClickGUI
@@ -98,6 +98,8 @@ object LiquidBounce {
 
         // Init Discord RPC
         clientRichPresence = ClientRichPresence()
+
+        scriptManager = ScriptManager()
 
         // Create command manager
         commandManager = CommandManager()
