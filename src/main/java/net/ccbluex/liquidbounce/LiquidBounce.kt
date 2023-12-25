@@ -38,7 +38,7 @@ object LiquidBounce {
     // Client information
     const val CLIENT_NAME = "LiquidBounce++"
     const val CLIENT_VERSION = "0.3"
-    const val CLIENT_CREATOR = "CCBlueX, exit-scammed, and MokkowDev"
+    const val CLIENT_CREATOR = "CCBlueX, exit-scammed, and PlusPlusMC"
     const val CLIENT_CLOUD = "https://plusplusmc.github.io/Cloud/LiquidBounce/"
 
     var isStarting = false
@@ -50,8 +50,8 @@ object LiquidBounce {
     lateinit var moduleManager: ModuleManager
     lateinit var commandManager: CommandManager
     lateinit var eventManager: EventManager
-    val fileManager = FileManager
-    val scriptManager = ScriptManager
+    lateinit var fileManager: FileManager
+    lateinit var scriptManager: ScriptManager
     lateinit var tipSoundManager: TipSoundManager
 
     // HUD & ClickGUI
@@ -82,9 +82,6 @@ object LiquidBounce {
 
         // Create file manager
         fileManager = FileManager()
-
-        // Create ScriptManager
-        scriptManager = ScriptManager()
 
         // Crate event manager
         eventManager = EventManager()
@@ -118,6 +115,9 @@ object LiquidBounce {
         // Remapper
         try {
             loadSrg()
+
+            // ScriptManager
+            scriptManager = ScriptManager()
             scriptManager.loadScripts()
             scriptManager.enableScripts()
         } catch (throwable: Throwable) {
@@ -128,8 +128,8 @@ object LiquidBounce {
         commandManager.registerCommands()
 
         // Load configs
-        //fileManager.loadConfigs(fileManager.modulesConfig, fileManager.valuesConfig, fileManager.accountsConfig, fileManager.friendsConfig, fileManager.xrayConfig)
-        fileManager.loadAllConfigs()
+        fileManager.loadConfigs(fileManager.modulesConfig, fileManager.valuesConfig, fileManager.accountsConfig,
+                fileManager.friendsConfig, fileManager.xrayConfig)
 
         // ClickGUI
         clickGui = ClickGui()
